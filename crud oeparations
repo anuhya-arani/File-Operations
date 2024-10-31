@@ -1,0 +1,74 @@
+import mysql.connector
+
+# Connect to the MySQL database
+def create_connection():
+    return mysql.connector.connect(
+        host="localhost",
+        user="your_username",  # Replace with your MySQL username
+        password="your_password",  # Replace with your MySQL password
+        database="mydatabase"
+    )
+
+# Create a new user
+def create_user(name, email):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+# Read all users
+def read_users():
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+# Update a user
+def update_user(user_id, name, email):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET name = %s, email = %s WHERE id = %s", (name, email, user_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+# Delete a user
+def delete_user(user_id):
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+# Example usage
+if __name__ == "__main__":
+    # Create users
+    create_user("Alice", "alice@example.com")
+    create_user("Bob", "bob@example.com")
+
+    # Read users
+    print("Users:")
+    for user in read_users():
+        print(user)
+
+    # Update a user
+    update_user(1, "Alice Smith", "alice.smith@example.com")
+
+    # Read users again
+    print("\nUpdated Users:")
+    for user in read_users():
+        print(user)
+
+    # Delete a user
+    delete_user(2)
+
+    # Read users after deletion
+    print("\nUsers after deletion:")
+    for user in read_users():
+        print(user)
